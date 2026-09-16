@@ -306,6 +306,225 @@
             box-shadow: 0 0 14px rgba(0, 0, 0, 0.28);
         }
 
+        .gallery-button {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            font: inherit;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .gallery-button:hover {
+            background: rgba(255, 255, 255, 0.24);
+            transform: translateY(-3px);
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.2);
+        }
+
+        .gallery-page {
+            position: fixed;
+            z-index: 20;
+            inset: 0;
+            display: none;
+            overflow: hidden;
+            background: #0b0b0b;
+            color: #ffffff;
+        }
+
+        .gallery-page.visible {
+            display: flex;
+            animation: gallery-fade-in 0.55s ease both;
+        }
+
+        .gallery-stage {
+            position: relative;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gallery-viewport {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .gallery-track {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            transform: translateX(-33.333333%);
+            transition: transform 0.48s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .gallery-image {
+            flex: 0 0 33.333333%;
+            width: 33.333333%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        @keyframes gallery-fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .gallery-empty {
+            max-width: 420px;
+            padding: 28px;
+            text-align: center;
+            color: #d1d5db;
+        }
+
+        .gallery-empty h2 {
+            margin-bottom: 10px;
+            color: #ffffff;
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+
+        .gallery-empty p {
+            line-height: 1.7;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: 96px 110px 34px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            pointer-events: none;
+        }
+
+        .gallery-caption h2,
+        .gallery-caption p {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .gallery-caption h2 {
+            margin-bottom: 6px;
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            font-weight: 400;
+        }
+
+        .gallery-caption p {
+            color: #d1d5db;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .gallery-artist {
+            position: absolute;
+            right: 34px;
+            bottom: 28px;
+            left: 34px;
+            color: #ffffff;
+            font-family: 'Sarabun', sans-serif;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .gallery-nav,
+        .gallery-close {
+            position: absolute;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .gallery-nav:hover,
+        .gallery-close:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .gallery-nav {
+            top: 50%;
+            width: 52px;
+            height: 76px;
+            border-radius: 16px;
+            transform: translateY(-50%);
+            font-size: 2rem;
+        }
+
+        .gallery-nav:hover {
+            transform: translateY(-50%) scale(1.04);
+        }
+
+        .gallery-nav-left {
+            left: 24px;
+        }
+
+        .gallery-nav-right {
+            right: 24px;
+        }
+
+        .gallery-close {
+            top: 22px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+        }
+
+        .gallery-counter {
+            position: absolute;
+            z-index: 2;
+            top: 34px;
+            left: 50%;
+            color: #d1d5db;
+            font-size: 0.9rem;
+            transform: translateX(-50%);
+        }
+
+        @media (max-width: 600px) {
+            .gallery-caption {
+                padding: 84px 24px 24px;
+            }
+
+            .gallery-nav {
+                width: 42px;
+                height: 58px;
+            }
+
+            .gallery-nav-left {
+                left: 12px;
+            }
+
+            .gallery-nav-right {
+                right: 12px;
+            }
+
+            .gallery-close {
+                top: 14px;
+                right: 14px;
+            }
+        }
+
         @keyframes rainbow-button {
             from { background-position: 0% 50%; }
             to { background-position: 100% 50%; }
@@ -342,6 +561,10 @@
 
         body.dark-mode .enter-chords-button:hover {
             background: #111111;
+        }
+
+        body.gallery-open {
+            overflow: hidden;
         }
 
         /* Header Bar */
@@ -430,6 +653,18 @@
         .channel-btn.twitter-btn:hover {
             background: #1f2937;
             color: #ffffff;
+        }
+
+        .channel-btn.gallery-btn {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fcd34d;
+            font-weight: 600;
+        }
+
+        .channel-btn.gallery-btn:hover {
+            background: #fde68a;
+            color: #78350f;
         }
 
         /* Sticky Control Panel */
@@ -1309,10 +1544,36 @@
         <p>กลุ่มแฟนคลับวีทูปเบอร์ที่มาร้องเพลงให้วีทูปเบอร์ ไม่แสวงหาผลกำไร</p>
         <button class="enter-chords-button" type="button" onclick="openChordApp()">Song chord / lyrics</button>
         <div class="landing-links">
+            <button class="gallery-button" type="button" onclick="openGallery()">Gallery</button>
             <a class="youtube-link" href="https://www.youtube.com/@WhoLabel" target="_blank" rel="noopener noreferrer">YouTube</a>
             <a href="https://x.com/WLBD7845" target="_blank" rel="noopener noreferrer">X</a>
             <a class="mv-link" href="https://youtube.com/playlist?list=PLtPlYLj1E1RH4DBUNncO97Jc4t8Mx6C6M" target="_blank" rel="noopener noreferrer">MV SONG</a>
         </div>
+    </div>
+</section>
+
+<section class="gallery-page" id="galleryPage" aria-label="แกลเลอรี่ภาพ">
+    <div class="gallery-stage" id="galleryStage">
+        <div class="gallery-viewport">
+            <div class="gallery-track" id="galleryTrack">
+                <img class="gallery-image" id="galleryImagePrevious" alt="">
+                <img class="gallery-image" id="galleryImage" alt="">
+                <img class="gallery-image" id="galleryImageNext" alt="">
+            </div>
+        </div>
+        <div class="gallery-empty" id="galleryEmpty">
+            <h2>Gallery</h2>
+            <p>ห้องสะสมภาพกำลังเตรียมไว้ รอเพิ่มรูปภาพจาก MV และไฟล์ข้อความประกอบ</p>
+        </div>
+        <div class="gallery-caption" id="galleryCaption" hidden>
+            <h2 id="galleryTitle"></h2>
+            <p id="galleryDescription"></p>
+            <div class="gallery-artist" id="galleryArtist"></div>
+        </div>
+        <button class="gallery-nav gallery-nav-left" id="galleryPrevious" type="button" onclick="showPreviousGalleryImage()" aria-label="ภาพก่อนหน้า">‹</button>
+        <button class="gallery-nav gallery-nav-right" id="galleryNext" type="button" onclick="showNextGalleryImage()" aria-label="ภาพถัดไป">›</button>
+        <button class="gallery-close" type="button" onclick="closeGallery()" aria-label="ปิดแกลเลอรี่">×</button>
+        <span class="gallery-counter" id="galleryCounter" aria-live="polite"></span>
     </div>
 </section>
 
@@ -1324,6 +1585,7 @@
     <!-- Header Section -->
     <header>
         <div class="channel-links">
+            <button class="channel-btn gallery-btn" type="button" onclick="openGallery()">Gallery</button>
             <a href="https://www.youtube.com/@WhoLabel" target="_blank" rel="noopener noreferrer" class="channel-btn youtube-btn">
                 YouTube
             </a>
@@ -1475,7 +1737,7 @@ Hey เราก็เดินทางกันมานาน
             vocal: 'Nummue/Mobie',
             occasion: 'เนื่องในโอกาสวันคล้ายวันเกิดของ <a href="https://www.youtube.com/@TsururuWorldEnd" target="_blank" rel="noopener noreferrer"><span class="highlight-name">Tsururu</span></a>',
             originalKey: 'E',
-            youtubeId: '',
+            youtubeId: 'km_JwpiqUQU',
             pdfFile: 'PDF/ตกทุกฤดู chord.pdf',
             easyPdfFile: 'PDF/ตกทุกฤดู chord basics.pdf',
             originalChords: ['Em7', 'Cmaj7', 'Gsus2', 'Bm7', 'Dsus4/F#', 'Am7', 'D7', 'Cm6', 'G', 'Cmaj7sus2', 'D', 'Dm7', 'Gmaj7', 'Em', 'G7', 'E11', 'F6', 'B', 'Am'],
@@ -1591,6 +1853,11 @@ Hey เราก็เดินทางกันมานาน
     let pianoOpen = false;
     let selectedPianoChord = '';
     let lyricsOnly = false;
+    let galleryItems = [];
+    let galleryIndex = 0;
+    let lastNonGalleryView = 'landing';
+    let galleryTouchStartX = null;
+    let galleryIsSliding = false;
 
     // Helper to normalize note name
     function normalizeNote(note) {
@@ -1974,6 +2241,7 @@ Hey เราก็เดินทางกันมานาน
     }
 
     function openChordApp(updateUrl = true) {
+        closeGallery(false);
         const hasSong = new URLSearchParams(window.location.search).has('song');
         if (!hasSong) {
             currentSongKey = null;
@@ -1987,7 +2255,178 @@ Hey เราก็เดินทางกันมานาน
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function updateGalleryUrl(replace = false) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('song');
+        url.searchParams.set('view', 'gallery');
+        window.history[replace ? 'replaceState' : 'pushState'](
+            { gallery: true },
+            '',
+            `${url.pathname}${url.search}${url.hash}`
+        );
+    }
+
+    function normalizeGalleryAssetPath(path) {
+        try {
+            return encodeURI(decodeURIComponent(path));
+        } catch (error) {
+            console.warn('Gallery asset path could not be decoded:', path, error);
+            return encodeURI(path);
+        }
+    }
+
+    function galleryItemAt(index) {
+        return galleryItems[(index + galleryItems.length) % galleryItems.length];
+    }
+
+    function setGalleryImage(image, item) {
+        image.hidden = false;
+        image.src = normalizeGalleryAssetPath(item.image);
+        image.alt = item.title || 'ภาพจากแกลเลอรี่ Who Label';
+    }
+
+    function updateGalleryCaption(item) {
+        document.getElementById('galleryTitle').textContent = item.title || '';
+        document.getElementById('galleryDescription').textContent = item.description || '';
+        const artist = item.artist ? `ART BY :${item.artist}` : '';
+        document.getElementById('galleryArtist').textContent = artist;
+        document.getElementById('galleryArtist').hidden = !artist;
+    }
+
+    function renderGalleryImage() {
+        const image = document.getElementById('galleryImage');
+        const previousImage = document.getElementById('galleryImagePrevious');
+        const nextImage = document.getElementById('galleryImageNext');
+        const track = document.getElementById('galleryTrack');
+        const empty = document.getElementById('galleryEmpty');
+        const caption = document.getElementById('galleryCaption');
+        const previous = document.getElementById('galleryPrevious');
+        const next = document.getElementById('galleryNext');
+        const counter = document.getElementById('galleryCounter');
+
+        if (!galleryItems.length) {
+            [previousImage, image, nextImage].forEach(currentImage => {
+                currentImage.removeAttribute('src');
+                currentImage.hidden = true;
+            });
+            empty.hidden = false;
+            caption.hidden = true;
+            previous.hidden = true;
+            next.hidden = true;
+            counter.textContent = '';
+            return;
+        }
+
+        const item = galleryItems[galleryIndex];
+        const previousItem = galleryItemAt(galleryIndex - 1);
+        const nextItem = galleryItemAt(galleryIndex + 1);
+        track.style.transition = 'none';
+        track.style.transform = 'translateX(-33.333333%)';
+        setGalleryImage(previousImage, previousItem);
+        setGalleryImage(image, item);
+        setGalleryImage(nextImage, nextItem);
+        requestAnimationFrame(() => {
+            track.style.transition = '';
+        });
+        empty.hidden = true;
+        caption.hidden = false;
+        previous.hidden = galleryItems.length < 2;
+        next.hidden = galleryItems.length < 2;
+        counter.textContent = `${galleryIndex + 1} / ${galleryItems.length}`;
+        updateGalleryCaption(item);
+        image.onerror = () => {
+            empty.hidden = false;
+            empty.querySelector('h2').textContent = 'ไม่สามารถโหลดภาพนี้ได้';
+            empty.querySelector('p').textContent = item.image;
+            caption.hidden = true;
+        };
+    }
+
+    function openGallery(updateUrl = true) {
+        document.getElementById('chordApp').style.display = 'none';
+        document.getElementById('landingPage').style.display = 'none';
+        const galleryPage = document.getElementById('galleryPage');
+        galleryPage.classList.remove('visible');
+        void galleryPage.offsetWidth;
+        galleryPage.classList.add('visible');
+        document.body.classList.add('gallery-open');
+        if (updateUrl) updateGalleryUrl();
+        renderGalleryImage();
+    }
+
+    function closeGallery(updateUrl = true) {
+        document.getElementById('galleryPage').classList.remove('visible');
+        document.body.classList.remove('gallery-open');
+        if (updateUrl) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('view');
+            url.searchParams.delete('song');
+            window.history.pushState(
+                { home: true },
+                '',
+                `${url.pathname}${url.search}${url.hash}`
+            );
+        }
+        document.getElementById('chordApp').style.display = 'none';
+        showLandingPage();
+        updatePageTitle(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showPreviousGalleryImage() {
+        slideGalleryImage(-1);
+    }
+
+    function showNextGalleryImage() {
+        slideGalleryImage(1);
+    }
+
+    function slideGalleryImage(direction) {
+        if (galleryItems.length < 2 || galleryIsSliding) return;
+        galleryIsSliding = true;
+        const track = document.getElementById('galleryTrack');
+        const targetIndex = (galleryIndex + direction + galleryItems.length) % galleryItems.length;
+        track.style.transform = `translateX(${direction > 0 ? '-66.666666%' : '0%'})`;
+        updateGalleryCaption(galleryItemAt(targetIndex));
+        window.setTimeout(() => {
+            galleryIndex = targetIndex;
+            galleryIsSliding = false;
+            renderGalleryImage();
+        }, 500);
+    }
+
+    async function loadGalleryItems() {
+        try {
+            const response = await fetch('gallery/gallery.json', { cache: 'no-store' });
+            if (!response.ok) throw new Error(`Gallery manifest request failed: ${response.status}`);
+            const items = await response.json();
+            if (!Array.isArray(items)) throw new Error('Gallery manifest must be an array');
+            galleryItems = await Promise.all(items.map(async item => {
+                if (!item || typeof item.image !== 'string') {
+                    throw new Error('Each gallery item must include an image path');
+                }
+                let description = typeof item.description === 'string' ? item.description : '';
+                if (!description && item.image) {
+                    const textPath = item.image.replace(/\.[^/.]+$/, '.txt');
+                    const textResponse = await fetch(textPath, { cache: 'no-store' });
+                    if (textResponse.ok) description = (await textResponse.text()).trim();
+                }
+                return {
+                    image: item.image,
+                    title: typeof item.title === 'string' ? item.title : '',
+                    description,
+                    artist: typeof item.artist === 'string' ? item.artist.trim() : ''
+                };
+            }));
+            renderGalleryImage();
+        } catch (error) {
+            console.warn('Gallery items could not be loaded:', error);
+        }
+    }
+
     function showLandingPage() {
+        document.getElementById('galleryPage').classList.remove('visible');
+        document.body.classList.remove('gallery-open');
         const landingPage = document.getElementById('landingPage');
         landingPage.style.display = 'flex';
         landingPage.classList.remove('entering');
@@ -2001,6 +2440,7 @@ Hey เราก็เดินทางกันมานาน
     }
 
     function backToHome() {
+        closeGallery(false);
         document.getElementById('chordApp').style.display = 'none';
         showLandingPage();
         document.getElementById('pdfLink').style.display = 'none';
@@ -2042,13 +2482,17 @@ Hey เราก็เดินทางกันมานาน
         document.getElementById('themeToggle').setAttribute('aria-label', 'เปิดโหมดสว่าง');
         document.getElementById('themeToggle').title = 'เปิดโหมดสว่าง';
     }
+    loadGalleryItems();
     const hasSongDeepLink = loadSongFromUrl();
     const hasChordView = new URLSearchParams(window.location.search).get('view') === 'chords';
+    const hasGalleryView = new URLSearchParams(window.location.search).get('view') === 'gallery';
     render();
     if (hasSongDeepLink) {
         openChordApp(false);
     } else if (hasChordView) {
         openChordApp(false);
+    } else if (hasGalleryView) {
+        openGallery(false);
     } else {
         updatePageTitle(false);
         showLandingPage();
@@ -2056,15 +2500,35 @@ Hey เราก็เดินทางกันมานาน
     window.addEventListener('popstate', () => {
         const changedSong = loadSongFromUrl();
         const changedToChordView = new URLSearchParams(window.location.search).get('view') === 'chords';
+        const changedToGalleryView = new URLSearchParams(window.location.search).get('view') === 'gallery';
         render();
         if (changedSong || changedToChordView) {
             openChordApp(false);
+        } else if (changedToGalleryView) {
+            openGallery(false);
         } else {
             document.getElementById('chordApp').style.display = 'none';
             showLandingPage();
             updatePageTitle(false);
         }
     });
+    document.addEventListener('keydown', event => {
+        if (!document.getElementById('galleryPage').classList.contains('visible')) return;
+        if (event.key === 'ArrowLeft') showPreviousGalleryImage();
+        if (event.key === 'ArrowRight') showNextGalleryImage();
+        if (event.key === 'Escape') closeGallery();
+    });
+    document.getElementById('galleryStage').addEventListener('touchstart', event => {
+        galleryTouchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+    document.getElementById('galleryStage').addEventListener('touchend', event => {
+        if (galleryTouchStartX === null) return;
+        const distance = event.changedTouches[0].screenX - galleryTouchStartX;
+        galleryTouchStartX = null;
+        if (Math.abs(distance) < 40) return;
+        if (distance > 0) showPreviousGalleryImage();
+        else showNextGalleryImage();
+    }, { passive: true });
 </script>
 
 </body>
