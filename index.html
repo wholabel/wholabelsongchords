@@ -1858,6 +1858,7 @@ Hey เราก็เดินทางกันมานาน
     let lastNonGalleryView = 'landing';
     let galleryTouchStartX = null;
     let galleryIsSliding = false;
+    let gallerySlideFallback = null;
 
     // Helper to normalize note name
     function normalizeNote(note) {
@@ -2386,13 +2387,21 @@ Hey เราก็เดินทางกันมานาน
         galleryIsSliding = true;
         const track = document.getElementById('galleryTrack');
         const targetIndex = (galleryIndex + direction + galleryItems.length) % galleryItems.length;
-        track.style.transform = `translateX(${direction > 0 ? '-66.666666%' : '0%'})`;
-        updateGalleryCaption(galleryItemAt(targetIndex));
-        window.setTimeout(() => {
+        const finishSlide = () => {
+            if (!galleryIsSliding) return;
+            track.removeEventListener('transitionend', finishSlide);
+            if (gallerySlideFallback !== null) {
+                window.clearTimeout(gallerySlideFallback);
+                gallerySlideFallback = null;
+            }
             galleryIndex = targetIndex;
             galleryIsSliding = false;
             renderGalleryImage();
-        }, 500);
+        };
+
+        track.addEventListener('transitionend', finishSlide, { once: true });
+        track.style.transform = `translateX(${direction > 0 ? '-66.666666%' : '0%'})`;
+        gallerySlideFallback = window.setTimeout(finishSlide, 700);
     }
 
     async function loadGalleryItems() {
