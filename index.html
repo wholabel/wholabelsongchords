@@ -2415,9 +2415,11 @@ Hey เราก็เดินทางกันมานาน
                     throw new Error('Each gallery item must include an image path');
                 }
                 let description = typeof item.description === 'string' ? item.description : '';
-                if (!description && item.image) {
-                    const textPath = item.image.replace(/\.[^/.]+$/, '.txt');
-                    const textResponse = await fetch(textPath, { cache: 'no-store' });
+                const descriptionPath = typeof item.descriptionFile === 'string'
+                    ? item.descriptionFile
+                    : item.image.replace(/\.[^/.]+$/, '.txt');
+                if (!description && descriptionPath) {
+                    const textResponse = await fetch(descriptionPath, { cache: 'no-store' });
                     if (textResponse.ok) description = (await textResponse.text()).trim();
                 }
                 return {
