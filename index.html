@@ -2815,14 +2815,25 @@ Hey เราก็เดินทางกันมานาน
         }
     });
     document.getElementById('galleryViewport').addEventListener('pointerdown', event => {
-        if (!galleryExpanded) return;
         galleryPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-        event.target.setPointerCapture?.(event.pointerId);
+        if (!galleryExpanded && galleryPointers.size === 1) return;
         if (galleryPointers.size === 2) {
             const points = [...galleryPointers.values()];
+            if (!galleryExpanded) {
+                galleryExpanded = true;
+                const galleryPage = document.getElementById('galleryPage');
+                galleryPage.classList.add('gallery-expanded');
+                document.getElementById('galleryCaption').hidden = true;
+                document.getElementById('galleryCounter').hidden = true;
+                document.getElementById('galleryPrevious').hidden = true;
+                document.getElementById('galleryNext').hidden = true;
+                document.getElementById('galleryClose').hidden = true;
+            }
+            event.target.setPointerCapture?.(event.pointerId);
+            const expandedPoints = [...galleryPointers.values()];
             galleryPinchStartDistance = Math.hypot(
-                points[1].x - points[0].x,
-                points[1].y - points[0].y
+                expandedPoints[1].x - expandedPoints[0].x,
+                expandedPoints[1].y - expandedPoints[0].y
             );
             galleryPinchStartZoom = galleryZoom;
             galleryDrag = null;
@@ -2830,6 +2841,8 @@ Hey เราก็เดินทางกันมานาน
             event.preventDefault();
             return;
         }
+        if (!galleryExpanded) return;
+        event.target.setPointerCapture?.(event.pointerId);
         if (galleryZoom <= 1) return;
         galleryDrag = {
             pointerId: event.pointerId,
