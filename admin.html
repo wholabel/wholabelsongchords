@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Who Label Admin</title>
+  <style>
+    body { max-width: 720px; margin: 40px auto; padding: 0 18px; font: 16px system-ui, sans-serif; color: #202124; }
+    label { display: block; margin: 18px 0 6px; font-weight: 600; }
+    input, select, button { width: 100%; box-sizing: border-box; padding: 11px; font: inherit; }
+    button { margin-top: 18px; cursor: pointer; }
+    #message { margin-top: 18px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>จัดการวิดีโอหน้าเว็บ</h1>
+  <p id="account">กำลังตรวจสอบสิทธิ์...</p>
+  <form id="videoForm" hidden>
+    <label for="side">ตำแหน่งวิดีโอ</label>
+    <select id="side">
+      <option value="left">ด้านซ้าย</option>
+      <option value="right">ด้านขวา</option>
+    </select>
+    <label for="video">ไฟล์วิดีโอ (ต้องไม่เกิน 100 MB)</label>
+    <input id="video" type="file" accept="video/mp4,video/webm,video/quicktime" required>
+    <button type="submit">อัปโหลดและบันทึก</button>
+  </form>
+  <p id="message"></p>
+  <script>
+    const workerUrl = 'https://wholabel-video-admin.pixeliandrive.workers.dev';
+    const account = document.getElementById('account');
+    const form = document.getElementById('videoForm');
+    const message = document.getElementById('message');
+    fetch(`${workerUrl}/api/me`, { credentials: 'include' })
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('ยังไม่ได้เข้าสู่ระบบ')))
+      .then(user => {
+        account.textContent = `เข้าสู่ระบบเป็น ${user.login}`;
+        form.hidden = false;
+      })
+      .catch(() => {
+        account.innerHTML = `<a href="${workerUrl}/auth/github">เข้าสู่ระบบด้วย GitHub</a>`;
+      });
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const file = document.getElementById('video').files[0];
+      if (!file) return;
+      if (file.size > 100 * 1024 * 1024) {
+        message.textContent = 'ไฟล์ใหญ่เกิน 100 MB ซึ่ง GitHub Contents API ไม่รองรับ';
+        return;
+      }
+      message.textContent = 'กำลังอัปโหลด...';
+      const body = new FormData();
+      body.set('side', document.getElementById('side').value);
+      body.set('video', file);
+      const response = await fetch(`${workerUrl}/api/videos`, {
+        method: 'POST',
+        credentials: 'include',
+        body
+      });
+      const result = await response.json().catch(() => ({}));
+      message.textContent = response.ok ? 'บันทึกสำเร็จ รอ GitHub Pages deploy สักครู่' : (result.error || 'อัปโหลดไม่สำเร็จ');
+    });
+  </script>
+</body>
+</html>
