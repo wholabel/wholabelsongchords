@@ -125,7 +125,7 @@
         }
 
         .landing-video-split {
-            z-index: -2;
+            z-index: 0;
             overflow: hidden;
         }
 
@@ -191,13 +191,13 @@
         }
 
         .landing-video-overlay {
-            z-index: -1;
+            z-index: 1;
             background: rgba(0, 0, 0, 0.62);
         }
 
         .landing-card {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             width: min(100%, 430px);
             padding: 34px 18px 30px;
             text-align: center;
@@ -369,6 +369,51 @@
             height: 100%;
             object-fit: contain;
             object-position: center;
+            transform: translate(0, 0) scale(1);
+            transform-origin: center center;
+            transition: transform 0.12s ease-out, cursor 0.12s ease-out;
+            cursor: zoom-in;
+        }
+
+        .gallery-page.gallery-expanded {
+            background: #000000;
+        }
+
+        .gallery-page.gallery-expanded .gallery-stage {
+            cursor: default;
+            touch-action: none;
+            overscroll-behavior: contain;
+        }
+
+        .gallery-page.gallery-expanded .gallery-caption,
+        .gallery-page.gallery-expanded .gallery-counter,
+        .gallery-page.gallery-expanded .gallery-nav,
+        .gallery-page.gallery-expanded .gallery-close {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .gallery-page.gallery-expanded .gallery-viewport {
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .gallery-page.gallery-expanded .gallery-image {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            object-fit: cover;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-drag: none;
+            touch-action: none;
+        }
+
+        .gallery-page.gallery-expanded .gallery-image:active {
+            cursor: grabbing;
         }
 
         @keyframes gallery-fade-in {
@@ -501,6 +546,58 @@
             transform: translateX(-50%);
         }
 
+        .gallery-zoom-controls {
+            position: absolute;
+            right: clamp(16px, 2vw, 26px);
+            bottom: clamp(16px, 3vh, 26px);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .gallery-zoom-controls.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .gallery-zoom-button {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            background: rgba(17, 17, 17, 0.22);
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 1.55rem;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .gallery-zoom-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.7);
+            transform: scale(1.04);
+        }
+
+        .gallery-zoom-button:active {
+            transform: scale(0.98);
+        }
+
+        .gallery-zoom-button-minus {
+            font-size: 2.1rem;
+            line-height: 0.7;
+        }
+
         @media (max-width: 600px) {
             .gallery-caption {
                 padding: 84px 24px 24px;
@@ -522,6 +619,22 @@
             .gallery-close {
                 top: 14px;
                 right: 14px;
+            }
+
+            .gallery-zoom-controls {
+                right: 14px;
+                bottom: 14px;
+                gap: 8px;
+            }
+
+            .gallery-zoom-button {
+                width: 38px;
+                height: 38px;
+                font-size: 1.35rem;
+            }
+
+            .gallery-zoom-button-minus {
+                font-size: 1.85rem;
             }
         }
 
@@ -1530,10 +1643,10 @@
 <section class="landing-page" id="landingPage">
     <div class="landing-video-split" aria-hidden="true">
         <video class="landing-background-video landing-background-video-left" autoplay muted loop playsinline preload="auto">
-            <source src="video present/Tt.web.mp4" type="video/mp4">
+            <source id="landingVideoLeftSource" src="video present/Tt.web.mp4" type="video/mp4">
         </video>
         <video class="landing-background-video landing-background-video-right" autoplay muted loop playsinline preload="auto">
-            <source src="video present/Bridge.web.mp4" type="video/mp4">
+            <source id="landingVideoRightSource" src="video present/Tsuru_No%20text.mp4" type="video/mp4">
         </video>
         <div class="landing-video-seam"></div>
     </div>
@@ -1554,7 +1667,7 @@
 
 <section class="gallery-page" id="galleryPage" aria-label="แกลเลอรี่ภาพ">
     <div class="gallery-stage" id="galleryStage">
-        <div class="gallery-viewport">
+        <div class="gallery-viewport" id="galleryViewport">
             <div class="gallery-track" id="galleryTrack">
                 <img class="gallery-image" id="galleryImagePrevious" alt="">
                 <img class="gallery-image" id="galleryImage" alt="">
@@ -1572,7 +1685,7 @@
         </div>
         <button class="gallery-nav gallery-nav-left" id="galleryPrevious" type="button" onclick="showPreviousGalleryImage()" aria-label="ภาพก่อนหน้า">‹</button>
         <button class="gallery-nav gallery-nav-right" id="galleryNext" type="button" onclick="showNextGalleryImage()" aria-label="ภาพถัดไป">›</button>
-        <button class="gallery-close" type="button" onclick="closeGallery()" aria-label="ปิดแกลเลอรี่">×</button>
+        <button class="gallery-close" id="galleryClose" type="button" onclick="closeGallery()" aria-label="ปิดแกลเลอรี่">×</button>
         <span class="gallery-counter" id="galleryCounter" aria-live="polite"></span>
     </div>
 </section>
@@ -1859,6 +1972,15 @@ Hey เราก็เดินทางกันมานาน
     let galleryTouchStartX = null;
     let galleryIsSliding = false;
     let gallerySlideFallback = null;
+    let galleryExpanded = false;
+    let galleryZoom = 1;
+    let galleryPanX = 0;
+    let galleryPanY = 0;
+    let galleryDrag = null;
+    let gallerySuppressClick = false;
+    const galleryPointers = new Map();
+    let galleryPinchStartDistance = null;
+    let galleryPinchStartZoom = 1;
 
     // Helper to normalize note name
     function normalizeNote(note) {
@@ -2242,6 +2364,7 @@ Hey เราก็เดินทางกันมานาน
     }
 
     function openChordApp(updateUrl = true) {
+        lastNonGalleryView = 'chords';
         closeGallery(false);
         const hasSong = new URLSearchParams(window.location.search).has('song');
         if (!hasSong) {
@@ -2294,6 +2417,23 @@ Hey เราก็เดินทางกันมานาน
         document.getElementById('galleryArtist').hidden = !artist;
     }
 
+    function changeGalleryZoom(delta) {
+        if (!galleryExpanded) {
+            toggleGalleryExpanded(true);
+        }
+
+        const nextZoom = clamp(Number((galleryZoom * delta).toFixed(2)), 1, 4);
+        if (nextZoom === galleryZoom && delta > 1 && galleryZoom < 4) {
+            galleryZoom = clamp(galleryZoom + 0.25, 1, 4);
+        } else if (nextZoom === galleryZoom && delta < 1 && galleryZoom > 1) {
+            galleryZoom = clamp(galleryZoom - 0.25, 1, 4);
+        } else {
+            galleryZoom = nextZoom;
+        }
+
+        applyGalleryZoom();
+    }
+
     function renderGalleryImage() {
         const image = document.getElementById('galleryImage');
         const previousImage = document.getElementById('galleryImagePrevious');
@@ -2330,10 +2470,11 @@ Hey เราก็เดินทางกันมานาน
             track.style.transition = '';
         });
         empty.hidden = true;
-        caption.hidden = false;
-        previous.hidden = galleryItems.length < 2;
-        next.hidden = galleryItems.length < 2;
+        caption.hidden = galleryExpanded;
+        previous.hidden = galleryItems.length < 2 || galleryExpanded;
+        next.hidden = galleryItems.length < 2 || galleryExpanded;
         counter.textContent = `${galleryIndex + 1} / ${galleryItems.length}`;
+        counter.hidden = galleryExpanded;
         updateGalleryCaption(item);
         image.onerror = () => {
             empty.hidden = false;
@@ -2341,36 +2482,131 @@ Hey เราก็เดินทางกันมานาน
             empty.querySelector('p').textContent = item.image;
             caption.hidden = true;
         };
+        resetGalleryZoom();
+    }
+
+    function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+    }
+
+    function applyGalleryZoom() {
+        const image = document.getElementById('galleryImage');
+        if (!image) return;
+        const viewport = document.getElementById('galleryViewport');
+        if (!viewport) return;
+        const zoomValue = clamp(galleryZoom, 1, 4);
+        galleryZoom = zoomValue;
+
+        if (!galleryExpanded) {
+            galleryPanX = 0;
+            galleryPanY = 0;
+            image.style.transform = 'translate(0px, 0px) scale(1)';
+            image.style.cursor = 'zoom-in';
+            return;
+        }
+
+        const viewportRect = viewport.getBoundingClientRect();
+        const naturalWidth = image.naturalWidth || image.clientWidth || viewportRect.width;
+        const naturalHeight = image.naturalHeight || image.clientHeight || viewportRect.height;
+        const coverScale = Math.max(
+            viewportRect.width / naturalWidth,
+            viewportRect.height / naturalHeight
+        );
+        const scaledWidth = naturalWidth * coverScale * zoomValue;
+        const scaledHeight = naturalHeight * coverScale * zoomValue;
+        const maxPanX = Math.max(0, (scaledWidth - viewportRect.width) / 2);
+        const maxPanY = Math.max(0, (scaledHeight - viewportRect.height) / 2);
+        galleryPanX = clamp(galleryPanX, -maxPanX, maxPanX);
+        galleryPanY = clamp(galleryPanY, -maxPanY, maxPanY);
+        image.style.transform = `translate(${galleryPanX}px, ${galleryPanY}px) scale(${zoomValue})`;
+        image.style.cursor = galleryDrag ? 'grabbing' : 'grab';
+    }
+
+    function resetGalleryZoom() {
+        galleryZoom = 1;
+        galleryPanX = 0;
+        galleryPanY = 0;
+        galleryDrag = null;
+        galleryPointers.clear();
+        galleryPinchStartDistance = null;
+        applyGalleryZoom();
+    }
+
+    function toggleGalleryExpanded(forceValue = !galleryExpanded) {
+        galleryExpanded = Boolean(forceValue);
+        const galleryPage = document.getElementById('galleryPage');
+        if (galleryExpanded) {
+            galleryPage.classList.add('gallery-expanded');
+            document.getElementById('galleryCaption').hidden = true;
+            document.getElementById('galleryCounter').hidden = true;
+            document.getElementById('galleryPrevious').hidden = true;
+            document.getElementById('galleryNext').hidden = true;
+            document.getElementById('galleryClose').hidden = true;
+            resetGalleryZoom();
+        } else {
+            galleryPage.classList.remove('gallery-expanded');
+            document.getElementById('galleryCaption').hidden = false;
+            document.getElementById('galleryCounter').hidden = false;
+            document.getElementById('galleryPrevious').hidden = galleryItems.length < 2;
+            document.getElementById('galleryNext').hidden = galleryItems.length < 2;
+            document.getElementById('galleryClose').hidden = false;
+            resetGalleryZoom();
+        }
     }
 
     function openGallery(updateUrl = true) {
+        lastNonGalleryView = document.getElementById('chordApp').style.display !== 'none' ? 'chords' : 'landing';
         document.getElementById('chordApp').style.display = 'none';
         document.getElementById('landingPage').style.display = 'none';
         const galleryPage = document.getElementById('galleryPage');
-        galleryPage.classList.remove('visible');
+        galleryPage.classList.remove('visible', 'gallery-expanded');
         void galleryPage.offsetWidth;
         galleryPage.classList.add('visible');
         document.body.classList.add('gallery-open');
+        galleryExpanded = false;
+        resetGalleryZoom();
         if (updateUrl) updateGalleryUrl();
         renderGalleryImage();
     }
 
     function closeGallery(updateUrl = true) {
-        document.getElementById('galleryPage').classList.remove('visible');
+        galleryExpanded = false;
+        const galleryPage = document.getElementById('galleryPage');
+        galleryPage.classList.remove('visible', 'gallery-expanded');
+        resetGalleryZoom();
         document.body.classList.remove('gallery-open');
+
+        const restoreView = lastNonGalleryView || 'landing';
+        if (restoreView === 'chords') {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('chordApp').style.display = 'block';
+            render();
+            updatePageTitle(Boolean(currentSongKey));
+        } else {
+            document.getElementById('chordApp').style.display = 'none';
+            showLandingPage();
+            updatePageTitle(false);
+        }
+
         if (updateUrl) {
             const url = new URL(window.location.href);
-            url.searchParams.delete('view');
-            url.searchParams.delete('song');
+            if (restoreView === 'chords') {
+                if (currentSongKey) {
+                    url.searchParams.set('song', songUrlNames[currentSongKey] || currentSongKey);
+                } else {
+                    url.searchParams.delete('song');
+                    url.searchParams.set('view', 'chords');
+                }
+            } else {
+                url.searchParams.delete('view');
+                url.searchParams.delete('song');
+            }
             window.history.pushState(
-                { home: true },
+                { home: restoreView === 'landing' },
                 '',
                 `${url.pathname}${url.search}${url.hash}`
             );
         }
-        document.getElementById('chordApp').style.display = 'none';
-        showLandingPage();
-        updatePageTitle(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -2436,6 +2672,7 @@ Hey เราก็เดินทางกันมานาน
     }
 
     function showLandingPage() {
+        lastNonGalleryView = 'landing';
         document.getElementById('galleryPage').classList.remove('visible');
         document.body.classList.remove('gallery-open');
         const landingPage = document.getElementById('landingPage');
@@ -2450,7 +2687,27 @@ Hey เราก็เดินทางกันมานาน
         });
     }
 
+    async function loadLandingVideoConfig() {
+        try {
+            const response = await fetch('video-config.json', { cache: 'no-store' });
+            if (!response.ok) throw new Error(`Video config request failed: ${response.status}`);
+            const config = await response.json();
+            const sources = {
+                left: document.getElementById('landingVideoLeftSource'),
+                right: document.getElementById('landingVideoRightSource')
+            };
+            for (const side of ['left', 'right']) {
+                if (typeof config[side] !== 'string' || !config[side]) continue;
+                sources[side].src = encodeURI(config[side]);
+                sources[side].parentElement.load();
+            }
+        } catch (error) {
+            console.warn('Landing video config could not be loaded:', error);
+        }
+    }
+
     function backToHome() {
+        lastNonGalleryView = 'landing';
         closeGallery(false);
         document.getElementById('chordApp').style.display = 'none';
         showLandingPage();
@@ -2494,6 +2751,7 @@ Hey เราก็เดินทางกันมานาน
         document.getElementById('themeToggle').title = 'เปิดโหมดสว่าง';
     }
     loadGalleryItems();
+    loadLandingVideoConfig();
     const hasSongDeepLink = loadSongFromUrl();
     const hasChordView = new URLSearchParams(window.location.search).get('view') === 'chords';
     const hasGalleryView = new URLSearchParams(window.location.search).get('view') === 'gallery';
@@ -2525,15 +2783,109 @@ Hey เราก็เดินทางกันมานาน
     });
     document.addEventListener('keydown', event => {
         if (!document.getElementById('galleryPage').classList.contains('visible')) return;
+        if (galleryExpanded) {
+            if (event.key === 'Escape') {
+                if (galleryZoom > 1 || galleryPanX !== 0 || galleryPanY !== 0) {
+                    resetGalleryZoom();
+                } else {
+                    toggleGalleryExpanded(false);
+                }
+                return;
+            }
+            return;
+        }
         if (event.key === 'ArrowLeft') showPreviousGalleryImage();
         if (event.key === 'ArrowRight') showNextGalleryImage();
         if (event.key === 'Escape') closeGallery();
     });
+    document.getElementById('galleryPage').addEventListener('wheel', event => {
+        if (!galleryExpanded) return;
+        event.preventDefault();
+        const delta = event.deltaY < 0 ? 1.12 : 0.9;
+        galleryZoom = clamp(Number((galleryZoom * delta).toFixed(2)), 1, 4);
+        applyGalleryZoom();
+    }, { passive: false });
+    document.getElementById('galleryImage').addEventListener('click', () => {
+        if (gallerySuppressClick) {
+            gallerySuppressClick = false;
+            return;
+        }
+        if (!galleryExpanded) {
+            toggleGalleryExpanded(true);
+        }
+    });
+    document.getElementById('galleryViewport').addEventListener('pointerdown', event => {
+        if (!galleryExpanded) return;
+        galleryPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        event.target.setPointerCapture?.(event.pointerId);
+        if (galleryPointers.size === 2) {
+            const points = [...galleryPointers.values()];
+            galleryPinchStartDistance = Math.hypot(
+                points[1].x - points[0].x,
+                points[1].y - points[0].y
+            );
+            galleryPinchStartZoom = galleryZoom;
+            galleryDrag = null;
+            gallerySuppressClick = true;
+            event.preventDefault();
+            return;
+        }
+        if (galleryZoom <= 1) return;
+        galleryDrag = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            originX: galleryPanX,
+            originY: galleryPanY,
+            moved: false
+        };
+        event.preventDefault();
+    }, { passive: false });
+    window.addEventListener('pointermove', event => {
+        if (!galleryExpanded || !galleryPointers.has(event.pointerId)) return;
+        galleryPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        if (galleryPointers.size >= 2 && galleryPinchStartDistance) {
+            const points = [...galleryPointers.values()];
+            const distance = Math.hypot(
+                points[1].x - points[0].x,
+                points[1].y - points[0].y
+            );
+            galleryZoom = clamp(
+                Number((galleryPinchStartZoom * distance / galleryPinchStartDistance).toFixed(2)),
+                1,
+                4
+            );
+            gallerySuppressClick = true;
+            applyGalleryZoom();
+            event.preventDefault();
+            return;
+        }
+        if (!galleryDrag || galleryDrag.pointerId !== event.pointerId) return;
+        if (
+            Math.abs(event.clientX - galleryDrag.startX) > 3
+            || Math.abs(event.clientY - galleryDrag.startY) > 3
+        ) {
+            galleryDrag.moved = true;
+            gallerySuppressClick = true;
+        }
+        galleryPanX = galleryDrag.originX + (event.clientX - galleryDrag.startX);
+        galleryPanY = galleryDrag.originY + (event.clientY - galleryDrag.startY);
+        applyGalleryZoom();
+    }, { passive: false });
+    const finishGalleryPointer = event => {
+        galleryPointers.delete(event.pointerId);
+        if (galleryPointers.size < 2) galleryPinchStartDistance = null;
+        if (galleryDrag?.pointerId === event.pointerId) galleryDrag = null;
+        applyGalleryZoom();
+    };
+    window.addEventListener('pointerup', finishGalleryPointer, { passive: true });
+    window.addEventListener('pointercancel', finishGalleryPointer, { passive: true });
     document.getElementById('galleryStage').addEventListener('touchstart', event => {
+        if (galleryExpanded) return;
         galleryTouchStartX = event.changedTouches[0].screenX;
     }, { passive: true });
     document.getElementById('galleryStage').addEventListener('touchend', event => {
-        if (galleryTouchStartX === null) return;
+        if (galleryExpanded || galleryTouchStartX === null) return;
         const distance = event.changedTouches[0].screenX - galleryTouchStartX;
         galleryTouchStartX = null;
         if (Math.abs(distance) < 40) return;
